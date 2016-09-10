@@ -1,0 +1,37 @@
+<h2 class="content-subhead">Search</h2>
+
+<form action="/search" method="get">
+  <input name="query" value="<%= params[:query] %>">
+  <button type="submit">Search</button>
+</form>
+
+<!--Do not run matcher untill a value is input for search-->
+<% if !params[:query].nil? %>
+<h3>
+  <%= "Results for '#{params[:query]}'" if !query_matcher(params[:query]).empty? %>
+</h3>
+<ul>
+<!--display titles of chapters that have search query-->
+  <% query_matcher(params[:query]).each_with_index do |match, index| %>
+  <li>
+    <h4>
+      <a href="/chapters/<%= match[1] + 1 %>" class="pure-menu-link"><%= match[0] %></a>
+    </h4>
+  
+
+<!--highlighted words in the paragraphs where they are found-->
+  <% match[2].each do |par| %>
+    <ul>
+      <li><p><%= high_lighter(par[0], params[:query], match[1], par[1]) %>
+      </p></li>
+    </ul>
+  </li>
+  <% end %>
+  <% end %>
+</ul>
+<!--Display when no matches are found-->
+<p>
+  <%= "Sorry, no matches were found" if query_matcher(params[:query]).empty? %>
+</p>
+<% end %>
+
